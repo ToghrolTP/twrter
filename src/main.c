@@ -99,6 +99,8 @@ int start_typing(char *passage) {
     printf("Mistakes made: %d\n", mistakes);
     printf("Words per minute: %.2f\n", wpm);
     printf("Accuracy: %.2f%%\n", 100.0 * (len - mistakes) / len);
+
+    return EXIT_SUCCESS;
 }
 
 char getch() {
