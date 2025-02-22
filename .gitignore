@@ -3,3 +3,6 @@
 
 # binary files
 bin/*
+
+# tmp
+tmp/*
