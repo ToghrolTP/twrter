@@ -1,0 +1,5 @@
+# IDE
+.vscode/
+
+# binary files
+bin/*
