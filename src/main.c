@@ -101,23 +101,37 @@ int start_typing(char *passage) {
     return EXIT_SUCCESS;
 }
 
+// Reads a single character from standard input without echo or buffering.
+// Note: This function is Unix-specific and relies on termios functionality.
 char getch() {
-    char buf = 0;
-    struct termios old = {0};
-    if (tcgetattr(0, &old) < 0)
-        perror("tcsetattr()");
-    old.c_lflag &= ~ICANON;
-    old.c_lflag &= ~ECHO;
-    old.c_cc[VMIN] = 1;
-    old.c_cc[VTIME] = 0;
-    if (tcsetattr(0, TCSANOW, &old) < 0)
-        perror("tcsetattr ICANON");
-    if (read(0, &buf, 1) < 0)
+    struct termios original;
+    if (tcgetattr(0, &original) < 0) {
+        perror("tcgetattr()");
+        exit(EXIT_FAILURE);  // Exit if we can't retrieve terminal settings
+    }
+
+    struct termios modified = original;  // Copy for temporary modifications
+    modified.c_lflag &= ~ICANON;  // Disable canonical mode (no Enter required)
+    modified.c_lflag &= ~ECHO;    // Disable echoing of input characters
+    modified.c_cc[VMIN] = 1;      // Read at least 1 character
+    modified.c_cc[VTIME] = 0;     // No timeout, wait indefinitely
+    if (tcsetattr(0, TCSANOW, &modified) < 0) {
+        perror("tcsetattr() failed to set non-canonical mode");
+        exit(EXIT_FAILURE);  // Exit if we can't apply the new settings
+    }
+
+    char buf;  // Buffer for the input character
+    if (read(0, &buf, 1) < 0) {
         perror("read()");
-    old.c_lflag |= ICANON;
-    old.c_lflag |= ECHO;
-    if (tcsetattr(0, TCSADRAIN, &old) < 0)
-        perror("tcsetattr ~ICANON");
+        tcsetattr(0, TCSADRAIN, &original);  // Attempt to restore settings
+        exit(EXIT_FAILURE);  // Exit if reading fails
+    }
+
+    if (tcsetattr(0, TCSADRAIN, &original) < 0) {
+        perror("tcsetattr() failed to restore original settings");
+        // Continue, as input was successfully read
+    }
+
     return buf;
 }
 
