@@ -12,10 +12,10 @@ int start_typing(char *passage);
 char getch();
 int get_real_word_count(const char *text);
 
-int main(int argc, char **argv) {
+int main() {
   start_typing(chose_the_passage());
 
-  return EXIT_SUCCESS;
+  exit(EXIT_SUCCESS);
 }
 
 char *chose_the_passage() {
@@ -60,7 +60,12 @@ char *chose_the_passage() {
   printf("> ");
 
   int choice;
-  scanf("%d", &choice);
+
+  if (scanf("%d", &choice) != 1) {
+      printf("Invalid input\n");
+      return NULL;
+  }
+
   switch (choice) {
   case 1:
     return passage1;
@@ -73,6 +78,7 @@ char *chose_the_passage() {
     return NULL;
   }
 }
+
 int start_typing(char *passage) {
   if (!passage) {
     printf("Exitting...\n");
