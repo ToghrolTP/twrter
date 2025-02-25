@@ -15,7 +15,7 @@ int get_real_word_count(const char *text);
 int main() {
   start_typing(chose_passage());
 
-  exit(EXIT_SUCCESS);
+  return EXIT_SUCCESS;
 }
 
 char *chose_passage() {
@@ -167,7 +167,7 @@ char getch() {
   struct termios original;
   if (tcgetattr(0, &original) < 0) {
     perror("tcgetattr()");
-    exit(EXIT_FAILURE); // Exit if we can't retrieve terminal settings
+    return EXIT_FAILURE; // Exit if we can't retrieve terminal settings
   }
 
   struct termios modified = original; // Copy for temporary modifications
@@ -177,14 +177,14 @@ char getch() {
   modified.c_cc[VTIME] = 0;    // No timeout, wait indefinitely
   if (tcsetattr(0, TCSANOW, &modified) < 0) {
     perror("tcsetattr() failed to set non-canonical mode");
-    exit(EXIT_FAILURE); // Exit if we can't apply the new settings
+    return EXIT_FAILURE; // Exit if we can't apply the new settings
   }
 
   char buf; // Buffer for the input character
   if (read(0, &buf, 1) < 0) {
     perror("read()");
     tcsetattr(0, TCSADRAIN, &original); // Attempt to restore settings
-    exit(EXIT_FAILURE);                 // Exit if reading fails
+    return EXIT_FAILURE;                 // Exit if reading fails
   }
 
   if (tcsetattr(0, TCSADRAIN, &original) < 0) {
