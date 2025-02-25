@@ -7,18 +7,18 @@
 #include <threads.h>
 #include <unistd.h>
 
-char *chose_the_passage();
+char *chose_passage();
 int start_typing(char *passage);
 char getch();
 int get_real_word_count(const char *text);
 
 int main() {
-  start_typing(chose_the_passage());
+  start_typing(chose_passage());
 
   exit(EXIT_SUCCESS);
 }
 
-char *chose_the_passage() {
+char *chose_passage() {
   char *passage1 =
       "If you're visiting this page, you're likely here because you're "
       "searching for a random sentence. Sometimes a random word just isn't "
