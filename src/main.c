@@ -98,7 +98,8 @@ int start_typing(char *passage) {
   char *typed_text = malloc(len + 1);
   memset(typed_text, 0, len + 1);
 
-  time_t start_time = time(NULL);
+  struct timespec start, end;
+  timespec_get(&start, TIME_UTC);
 
   while (letter < len) {
     // Move cursor to top without full clear (less flicker)
@@ -146,8 +147,8 @@ int start_typing(char *passage) {
     }
   }
 
-  time_t end_time = time(NULL);
-  double time_taken = difftime(end_time, start_time);
+  timespec_get(&end, TIME_UTC);
+  double time_taken = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9;
   double words = get_real_word_count(passage);
   double wpm = (words * 60) / time_taken;
 
